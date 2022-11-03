@@ -8,6 +8,4 @@ class ProductRepository(
 
     suspend fun getAllProducts() = api.getAllProducts()
 
-    suspend fun getAllCategories() = api.getAllCategories()
-
 }

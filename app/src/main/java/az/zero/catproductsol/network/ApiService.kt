@@ -9,7 +9,4 @@ interface ApiService {
     @GET("products")
     suspend fun getAllProducts(): Response<ProductResponse>
 
-    @GET("products/categories")
-    suspend fun getAllCategories(): Response<List<String>>
-
 }

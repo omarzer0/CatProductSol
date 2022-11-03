@@ -1,8 +1,9 @@
 package az.zero.catproductsol.ui
 
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import az.zero.catproductsol.core.MyApp
 import az.zero.catproductsol.core.ResponseState
@@ -32,33 +33,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupViews() {
-        binding.apply {
-            rvProducts.adapter = productAdapter
-        }
+        binding.rvProducts.adapter = productAdapter
     }
 
     private fun observeData() {
-        viewModel.productLD.observe(this) {
-            Log.d(TAG, "observeData: $it")
-            when (it) {
-                is ResponseState.Error -> {}
+        viewModel.productLD.observe(this) { productState ->
+            binding.pbLoading.isVisible = productState is ResponseState.Loading
+
+            when (productState) {
+                is ResponseState.Error -> {
+                    Toast.makeText(
+                        this,
+                        "${productState.message ?: "Unknown error"}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
                 is ResponseState.Loading -> {}
                 is ResponseState.Success -> {
-                    val products = it.data?.products ?: return@observe
+                    // submit to the adapter
+                    val products = productState.data?.products ?: return@observe
                     productAdapter.submitList(products)
-                    Log.d(TAG, "observeData: ${products[0].images[0]}")
                 }
             }
+
         }
 
-        viewModel.categoriesLD.observe(this) {
-            when (it) {
-                is ResponseState.Error -> {}
-                is ResponseState.Loading -> {}
-                is ResponseState.Success -> {
-                    val categories = it.data ?: return@observe
-                }
-            }
-        }
     }
 }

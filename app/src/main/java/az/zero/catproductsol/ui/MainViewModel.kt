@@ -19,10 +19,6 @@ class MainViewModel(
     private val _productMLD = MutableLiveData<ResponseState<ProductResponse>>()
     val productLD: LiveData<ResponseState<ProductResponse>> = _productMLD
 
-    private val _categoriesMLD = MutableLiveData<ResponseState<List<String>>>()
-    val categoriesLD: LiveData<ResponseState<List<String>>> = _categoriesMLD
-
-
     private fun getAllProducts() {
         viewModelScope.launch {
             networkCall(
@@ -32,17 +28,7 @@ class MainViewModel(
         }
     }
 
-    private fun getAllCategories() {
-        viewModelScope.launch {
-            networkCall(
-                action = { repository.getAllCategories() },
-                onResponse = { _categoriesMLD.postValue(it) }
-            )
-        }
-    }
-
     init {
         getAllProducts()
-        getAllCategories()
     }
 }
